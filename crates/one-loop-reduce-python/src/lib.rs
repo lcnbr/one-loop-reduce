@@ -110,8 +110,8 @@ impl SymbolicaCommunityModule for CommunityModule {
 /// Examples
 /// --------
 /// >>> from symbolica import S, E
-/// >>> from symbolica.community import hep
-/// >>> from symbolica.community.hep import oneloop
+/// >>> from symbolica import hepkit as hep
+/// >>> from symbolica.hepkit import oneloop
 /// >>> d, k, p, s = S("d", "k", "p", "s")
 /// >>> kin = hep.Kinematics(d, momenta=[k, p]).with_scalar_product(p, p, s)
 /// >>> family = hep.IntegralFamily([k], [p], [kin.scalar_product(k, k),
@@ -129,7 +129,7 @@ impl SymbolicaCommunityModule for CommunityModule {
 ///     Additional scalar numerator; None uses one.
 #[cfg_attr(
     feature = "python_stubgen",
-    gen_stub_pyfunction(module = "symbolica.community.hep.oneloop")
+    gen_stub_pyfunction(module = "symbolica.hepkit.oneloop")
 )]
 #[pyfunction]
 #[pyo3(signature = (family, powers, *, numerator = None))]
@@ -214,8 +214,8 @@ pub fn validate_namespace(input: &Atom) -> PyResult<()> {
 /// Examples
 /// --------
 /// >>> from symbolica import S, E
-/// >>> from symbolica.community import hep
-/// >>> from symbolica.community.hep import oneloop
+/// >>> from symbolica import hepkit as hep
+/// >>> from symbolica.hepkit import oneloop
 /// >>> d, k, p, s = S("d", "k", "p", "s")
 /// >>> kin = hep.Kinematics(d, momenta=[k, p]).with_scalar_product(p, p, s)
 /// >>> family = hep.IntegralFamily([k], [p], [kin.scalar_product(k, k),
@@ -230,7 +230,7 @@ pub fn validate_namespace(input: &Atom) -> PyResult<()> {
     frozen,
     from_py_object,
     name = "Reduction",
-    module = "symbolica.community.hep.oneloop"
+    module = "symbolica.hepkit.oneloop"
 )]
 #[derive(Clone)]
 pub struct Reduction {
@@ -284,8 +284,8 @@ impl Reduction {
     /// Examples
     /// --------
     /// >>> from symbolica import S, E
-    /// >>> from symbolica.community import hep
-    /// >>> from symbolica.community.hep import oneloop
+    /// >>> from symbolica import hepkit as hep
+    /// >>> from symbolica.hepkit import oneloop
     /// >>> d, k, p, s = S("d", "k", "p", "s")
     /// >>> kin = hep.Kinematics(d, momenta=[k, p]).with_scalar_product(p, p, s)
     /// >>> family = hep.IntegralFamily([k], [p], [kin.scalar_product(k, k),
@@ -355,8 +355,8 @@ impl Reduction {
 /// Examples
 /// --------
 /// >>> from symbolica import S, E
-/// >>> from symbolica.community import hep
-/// >>> from symbolica.community.hep import oneloop
+/// >>> from symbolica import hepkit as hep
+/// >>> from symbolica.hepkit import oneloop
 /// >>> d, k, p, s = S("d", "k", "p", "s")
 /// >>> kin = hep.Kinematics(d, momenta=[k, p]).with_scalar_product(p, p, s)
 /// >>> family = hep.IntegralFamily([k], [p], [kin.scalar_product(k, k),
@@ -372,7 +372,7 @@ impl Reduction {
     from_py_object,
     eq,
     name = "MasterIntegral",
-    module = "symbolica.community.hep.oneloop"
+    module = "symbolica.hepkit.oneloop"
 )]
 #[derive(Clone, PartialEq)]
 pub struct MasterIntegral {
@@ -435,8 +435,8 @@ impl MasterIntegral {
     /// Examples
     /// --------
     /// >>> from symbolica import S, E
-    /// >>> from symbolica.community import hep
-    /// >>> from symbolica.community.hep import oneloop
+    /// >>> from symbolica import hepkit as hep
+    /// >>> from symbolica.hepkit import oneloop
     /// >>> d, k, p, s = S("d", "k", "p", "s")
     /// >>> kin = hep.Kinematics(d, momenta=[k, p]).with_scalar_product(p, p, s)
     /// >>> family = hep.IntegralFamily([k], [p], [kin.scalar_product(k, k),

@@ -54,7 +54,7 @@ reads them.
 
 ## 2026-09-28 — integration review: errors instead of wrong answers, `hep.oneloop`
 
-The module was linked into symbolica-community as `symbolica.community.hep.oneloop`,
+The module was linked into symbolica-community as `symbolica.hepkit.oneloop`,
 beside oneloopmaster, and a review (`COMMUNITY_INTEGRATION_REVIEW.md`, 2026-09-23)
 came back with six findings and two patches.
 

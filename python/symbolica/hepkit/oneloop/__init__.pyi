@@ -3,7 +3,7 @@
 
 import builtins
 import typing
-from symbolica.community.feynkit import IntegralFamily
+from symbolica.hepkit import IntegralFamily
 from symbolica.core import Expression
 
 @typing.final
@@ -19,8 +19,8 @@ class MasterIntegral:
     Examples
     --------
     >>> from symbolica import S, E
-    >>> from symbolica.community import hep
-    >>> from symbolica.community.hep import oneloop
+    >>> from symbolica import hepkit as hep
+    >>> from symbolica.hepkit import oneloop
     >>> d, k, p, s = S("d", "k", "p", "s")
     >>> kin = hep.Kinematics(d, momenta=[k, p]).with_scalar_product(p, p, s)
     >>> family = hep.IntegralFamily([k], [p], [kin.scalar_product(k, k),
@@ -62,8 +62,8 @@ class MasterIntegral:
         Examples
         --------
         >>> from symbolica import S, E
-        >>> from symbolica.community import hep
-        >>> from symbolica.community.hep import oneloop
+        >>> from symbolica import hepkit as hep
+        >>> from symbolica.hepkit import oneloop
         >>> d, k, p, s = S("d", "k", "p", "s")
         >>> kin = hep.Kinematics(d, momenta=[k, p]).with_scalar_product(p, p, s)
         >>> family = hep.IntegralFamily([k], [p], [kin.scalar_product(k, k),
@@ -97,8 +97,8 @@ class Reduction:
     Examples
     --------
     >>> from symbolica import S, E
-    >>> from symbolica.community import hep
-    >>> from symbolica.community.hep import oneloop
+    >>> from symbolica import hepkit as hep
+    >>> from symbolica.hepkit import oneloop
     >>> d, k, p, s = S("d", "k", "p", "s")
     >>> kin = hep.Kinematics(d, momenta=[k, p]).with_scalar_product(p, p, s)
     >>> family = hep.IntegralFamily([k], [p], [kin.scalar_product(k, k),
@@ -130,8 +130,8 @@ class Reduction:
         Examples
         --------
         >>> from symbolica import S, E
-        >>> from symbolica.community import hep
-        >>> from symbolica.community.hep import oneloop
+        >>> from symbolica import hepkit as hep
+        >>> from symbolica.hepkit import oneloop
         >>> d, k, p, s = S("d", "k", "p", "s")
         >>> kin = hep.Kinematics(d, momenta=[k, p]).with_scalar_product(p, p, s)
         >>> family = hep.IntegralFamily([k], [p], [kin.scalar_product(k, k),
@@ -172,8 +172,8 @@ def reduce(family: IntegralFamily, powers: typing.Sequence[builtins.int], *, num
     Examples
     --------
     >>> from symbolica import S, E
-    >>> from symbolica.community import hep
-    >>> from symbolica.community.hep import oneloop
+    >>> from symbolica import hepkit as hep
+    >>> from symbolica.hepkit import oneloop
     >>> d, k, p, s = S("d", "k", "p", "s")
     >>> kin = hep.Kinematics(d, momenta=[k, p]).with_scalar_product(p, p, s)
     >>> family = hep.IntegralFamily([k], [p], [kin.scalar_product(k, k),

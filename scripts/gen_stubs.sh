@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Regenerate python/symbolica/community/hep/oneloop.pyi (reducer classes only).
+# Regenerate python/symbolica/hepkit/oneloop/__init__.pyi (reducer classes only).
 #
 # pyo3-stub-gen's `define_stub_info_gatherer!` hard-codes
 # `$CARGO_MANIFEST_DIR/pyproject.toml` as the place it reads the module name and
@@ -19,7 +19,10 @@ cleanup() {
     rm -f "$crate/pyproject.toml" "$crate/src/bin/stub_gen.rs"
     rmdir "$crate/src/bin" 2>/dev/null || true
     # Symbolica and FeynKit ship their own stubs.
-    rm -f "$repo"/python/symbolica/core.pyi "$repo"/python/symbolica/community/{feynkit,tensor}.pyi
+    rm -f "$repo"/python/symbolica/core.pyi \
+        "$repo"/python/symbolica/hepkit.pyi \
+        "$repo"/python/symbolica/hepkit/__init__.pyi \
+        "$repo"/python/symbolica/community/tensor.pyi
 }
 trap cleanup EXIT
 
@@ -42,7 +45,11 @@ RUST
 cargo run --manifest-path "$repo/Cargo.toml" \
     -p one-loop-reduce-python --features python_stubgen --bin stub_gen
 
+mkdir -p "$repo/python/symbolica/hepkit/oneloop"
+mv "$repo/python/symbolica/hepkit/oneloop.pyi" \
+    "$repo/python/symbolica/hepkit/oneloop/__init__.pyi"
+
 # The generator writes the canonical module's flat stub. The community host
 # merges this reducer surface with the master evaluator's API in its own stub.
 # It also re-emits Symbolica's and FeynKit's stubs, which cleanup removes.
-echo "wrote python/symbolica/community/hep/oneloop.pyi"
+echo "wrote python/symbolica/hepkit/oneloop/__init__.pyi"
