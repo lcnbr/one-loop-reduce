@@ -9,8 +9,8 @@ import math
 
 import pytest
 from symbolica import E, Expression, S
-from symbolica import hepkit as hep
-from symbolica.hepkit import oneloop
+from symbolica.community import hepkit as hep
+from symbolica.community.hepkit import oneloop
 
 
 def bubble_family(mass, invariant):
@@ -25,9 +25,9 @@ def bubble_family(mass, invariant):
 
 
 def test_the_module_has_no_duplicate_input_model():
-    assert oneloop.__name__ == "symbolica.hepkit.oneloop"
-    assert oneloop.Reduction.__module__ == "symbolica.hepkit.oneloop"
-    assert oneloop.MasterIntegral.__module__ == "symbolica.hepkit.oneloop"
+    assert oneloop.__name__ == "symbolica.community.hepkit.oneloop"
+    assert oneloop.Reduction.__module__ == "symbolica.community.hepkit.oneloop"
+    assert oneloop.MasterIntegral.__module__ == "symbolica.community.hepkit.oneloop"
     assert not hasattr(oneloop, "Propagator")
     assert not hasattr(oneloop, "IntegralFamily")
 

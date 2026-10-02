@@ -8,12 +8,12 @@ type of its own.
 
 ## Python
 
-It ships in the Symbolica community wheel as `symbolica.hepkit.oneloop`.
+It ships in the Symbolica community wheel as `symbolica.community.hepkit.oneloop`.
 
 ```python
 from symbolica import E, S
-from symbolica import hepkit as hep
-from symbolica.hepkit import oneloop
+from symbolica.community import hepkit as hep
+from symbolica.community.hepkit import oneloop
 
 D, k, p, q, m2, s1, s2, s = S("D", "k", "p", "q", "m2", "s1", "s2", "s")
 kin = (hep.Kinematics(D, momenta=[k, p, q])
