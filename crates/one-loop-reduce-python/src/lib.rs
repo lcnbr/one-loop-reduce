@@ -31,6 +31,7 @@ impl SymbolicaCommunityModule for CommunityModule {
         }
         let mut citations = vec![Citation {
             id: "https://github.com/ecavan/one-loop-reduce".into(),
+            url: "https://github.com/ecavan/one-loop-reduce".into(),
             reference: "Elijah Cavan. one-loop-reduce (2026).".into(),
             bibtex: r#"@software{one_loop_reduce,
   author = {Cavan, Elijah},
@@ -69,6 +70,7 @@ impl SymbolicaCommunityModule for CommunityModule {
         citations.extend(papers.map(
             |(key, doi, authors, title, journal, volume, pages, year, reason)| Citation {
                 id: doi.into(),
+                url: format!("https://doi.org/{doi}"),
                 reference: format!("{authors}, {journal} {volume} ({year}) {pages}."),
                 bibtex: format!(
                     "@article{{{key},\n  author = {{{authors}}},\n  title = {{{title}}},\n  \
