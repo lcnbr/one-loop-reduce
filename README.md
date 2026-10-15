@@ -68,7 +68,10 @@ Exact master formulas and analytic-branch selection are oneloopmaster's; see its
 - With five or more propagators the reduction drops an `O(ε)` term and needs
   four-dimensional external kinematics.
 - Where the regulated on-shell limit does not exist, an exact IBP solve at the
-  degenerate point takes over.
+  degenerate point takes over. Its ordering favors unit-power higher-point
+  scalar masters, retaining an IR triangle when reducing it to bubbles would
+  introduce an avoidable pole at `D = 4`. This is a basis preference, not a
+  guarantee for arbitrary coefficients.
 - A coefficient with a pole at `D = 4` would need positive orders in ε from the
   masters, which oneloopmaster does not supply, so `reduction_coefficients` rejects it.
 

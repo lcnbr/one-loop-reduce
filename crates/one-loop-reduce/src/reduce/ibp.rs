@@ -1,7 +1,7 @@
 //! Exact reduction by Gaussian elimination of the IBP identities (Laporta),
 //! at fixed kinematics with `d` symbolic. Far slower than the recursions, so
 //! it is only the fallback where their on-shell limit does not exist: it needs
-//! no regulator, finds the smaller master basis of a degenerate point itself,
+//! no regulator, selects an independent scalar basis at a degenerate point,
 //! and sends integrals without a scale to zero.
 
 use std::collections::{BTreeMap, HashMap};
@@ -19,15 +19,28 @@ use crate::symbols::S;
 /// An integral `I(a) = ∫ 1/(D_1^a_1 ... D_N^a_N)`; `a_i <= 0` is a numerator.
 type Index = Vec<i32>;
 
-/// Integrals sorted by complexity: lines, then dots, then numerator powers.
-/// A master is the simplest integral of its sector: all lines to the power 1.
-type Key = (usize, i32, i32, Index);
+/// Eliminate dotted/numerator integrals first. Among unit-power scalar
+/// integrals retain the higher-point master: eliminating an IR triangle into
+/// bubbles can introduce a 1/(d-4) absent from the original representation.
+/// This preference reduces avoidable poles, without promising an epsilon-finite
+/// basis for every family or arbitrary dimension-dependent numerator.
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+enum Complexity {
+    Scalar(std::cmp::Reverse<usize>),
+    NonScalar(usize),
+}
+type Key = (Complexity, i32, i32, Index);
 
 fn key(a: &[i32]) -> Key {
     let lines = a.iter().filter(|&&e| e > 0).count();
     let dots = a.iter().filter(|&&e| e > 0).map(|&e| e - 1).sum();
     let numerator = a.iter().filter(|&&e| e < 0).map(|&e| -e).sum();
-    (lines, dots, numerator, a.to_vec())
+    let kind = if dots == 0 && numerator == 0 {
+        Complexity::Scalar(std::cmp::Reverse(lines))
+    } else {
+        Complexity::NonScalar(lines)
+    };
+    (kind, dots, numerator, a.to_vec())
 }
 
 fn rp(a: &Atom) -> Rp {
@@ -202,7 +215,13 @@ pub(super) fn reduce_exact(family: &RecurrenceInput) -> Option<Vec<(Atom, Master
                     .collect()
             };
             let sub_masses: Vec<Atom> = lines.iter().map(|&i| masses[i].clone()).collect();
-            let masters = reduce_cayley(&sub(&y_atoms), &sub_masses, &vec![1; lines.len()]);
+            let sub_y = sub(&y_atoms);
+            // Reordering may leave a unit-power scaleless sub-sector among
+            // the symbolic residuals. It is zero in dimensional regularization.
+            if sub_masses.iter().all(Atom::is_zero) && sub_y.iter().flatten().all(Atom::is_zero) {
+                continue;
+            }
+            let masters = reduce_cayley(&sub_y, &sub_masses, &vec![1; lines.len()]);
             add_scaled(&mut out, &(coefficient * c.to_expression()), masters);
         }
     }
@@ -303,11 +322,11 @@ mod tests {
         }
     }
 
-    /// With two on-shell legs the massless triangle is not a master:
+    /// With two on-shell legs a massless triangle and a bubble are dependent:
     /// `C0(0,0,s) = -2(d-3)/((d-4) s) B0(s,0,0)`, from the ratio of their
     /// Gamma-function closed forms.
     #[test]
-    fn the_on_shell_massless_triangle_is_a_bubble() {
+    fn the_on_shell_massless_triangle_is_retained_without_a_coefficient_pole() {
         crate::ensure_symbolica_license();
         let s = Atom::var(S.psq);
         let d = Atom::var(S.d);
@@ -318,7 +337,30 @@ mod tests {
             m1_sq: Atom::Zero,
             m2_sq: Atom::Zero,
         };
-        assert_same("C0(0,0,s)", &reduce_exact(&fam).unwrap(), &[(want, bubble)]);
+        let exact = reduce_exact(&fam).unwrap();
+        assert_eq!(exact.len(), 1);
+        assert!(matches!(exact[0].1, MasterIntegral::Triangle { .. }));
+        assert!((exact[0].0.clone() - n(1)).cancel().is_zero());
+        // Its pinched bubble is now C0/want, whose coefficient vanishes at d=4.
+        let mut pinched = fam.clone();
+        pinched.powers = vec![1, 0, 1];
+        let reduced_bubble = reduce_exact(&pinched).unwrap();
+        assert_eq!(reduced_bubble.len(), 1, "{reduced_bubble:?}");
+        assert_eq!(reduced_bubble[0].1, exact[0].1);
+        assert!((&reduced_bubble[0].0 * &want - n(1)).cancel().is_zero());
+        assert!(
+            reduced_bubble[0]
+                .0
+                .replace(d.to_pattern())
+                .with(n(4))
+                .is_zero()
+        );
+        // The ordinary recurrence remains a valid independent representation.
+        assert_same(
+            "pinched bubble",
+            &reduce(&pinched).unwrap().terms,
+            &[(n(1), bubble)],
+        );
     }
 
     /// Where the shared-delta limit exists, the exact reduction at the on-shell
