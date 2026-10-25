@@ -3,6 +3,20 @@
 
 use symbolica::atom::Atom;
 
+/// Optional diagnostic stops for the existing one-loop recurrence.
+/// RAM and elapsed time are controlled by the enclosing Symbolica resource scope.
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+pub struct ReductionOptions {
+    pub diagnostic_max_total_index: Option<i64>,
+}
+
+impl ReductionOptions {
+    pub fn with_diagnostics(mut self) -> Self {
+        self.diagnostic_max_total_index = Some(i64::from(crate::reduce::MAX_TOTAL_INDEX));
+        self
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct RecurrenceInput {
     pub masses_squared: Vec<Atom>,

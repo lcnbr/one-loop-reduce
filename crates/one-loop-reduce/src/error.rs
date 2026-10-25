@@ -1,7 +1,12 @@
+use symbolica::utils::resources::ResourceLimitError;
 use thiserror::Error;
 
 #[derive(Debug, Error)]
 pub enum OneLoopError {
+    /// A shared caller resource budget stopped the request.
+    #[error("{0}")]
+    Resource(#[from] ResourceLimitError),
+
     /// The input graph is not one loop.
     #[error("unsupported loop order: graph has {found} loops, only one-loop is supported")]
     UnsupportedLoopOrder { found: usize },
@@ -11,9 +16,11 @@ pub enum OneLoopError {
     #[error("failed to extract integral family from graph: {reason}")]
     ExtractionFailed { reason: String },
 
-    /// Propagator powers beyond what the recursion can bottom out on.
-    #[error("unsupported propagator powers {found:?}: the positive powers may total at most {max}")]
-    UnsupportedIndex { found: Vec<i32>, max: i32 },
+    /// An explicitly enabled total-index diagnostic stopped the request.
+    #[error(
+        "propagator-index diagnostic for {found:?}: the positive powers may total at most {max}"
+    )]
+    UnsupportedIndex { found: Vec<i32>, max: i64 },
 
     /// A symbolic input uses the superseded reducer-only namespace.
     #[error(

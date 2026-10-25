@@ -9,8 +9,8 @@ description = "One-loop IBP reduction of Feynman integrals to the scalar master 
 name = "oneloopreduce"
 
 [dependencies]
-feynkit-graph = { git = "https://github.com/alphal00p/gammaloop", branch = "feynkit", default-features = false }
-feynkit-kinematics = { git = "https://github.com/alphal00p/gammaloop", branch = "feynkit", default-features = false }
+feynkit-graph = { git = "https://github.com/alphal00p/gammaloop", branch = "preserve-canonical-numerator-interfaces", default-features = false }
+feynkit-kinematics = { git = "https://github.com/alphal00p/gammaloop", branch = "preserve-canonical-numerator-interfaces", default-features = false }
 # Must stay a crates.io version requirement -- see the note in the workspace
 # root Cargo.toml.
 #
@@ -20,6 +20,7 @@ feynkit-kinematics = { git = "https://github.com/alphal00p/gammaloop", branch = 
 # (Under 2.2 this was impossible -- dropping the defaults left numerica with
 # neither an integer nor a float backend.)
 symbolica = { version = "3.0.1", default-features = false }
+stacker = "0.1.25"
 thiserror = "2.0"
 
 # The native master Symbols and their direct Rust numerical hooks are owned by

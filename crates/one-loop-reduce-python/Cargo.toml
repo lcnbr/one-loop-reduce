@@ -13,7 +13,7 @@ name = "oneloopreduce_python"
 crate-type = ["rlib", "cdylib"]
 
 [dependencies]
-feynkit-py = { git = "https://github.com/alphal00p/gammaloop", branch = "feynkit", default-features = false }
+feynkit-py = { git = "https://github.com/alphal00p/gammaloop", branch = "preserve-canonical-numerator-interfaces", default-features = false }
 one-loop-reduce = { path = "../one-loop-reduce", version = "0.1.0", default-features = false }
 
 # Same crates.io requirement as the library crate -- see the note in the

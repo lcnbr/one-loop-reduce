@@ -86,6 +86,9 @@ def test_wrong_power_count_raises():
         oneloop.reduce(bubble_family(E("0"), E("-3")), [1])
 
 
-def test_the_recursion_guard_raises_instead_of_aborting():
-    with pytest.raises(ValueError):
-        oneloop.reduce(bubble_family(E("0"), E("-3")), [40, 1])
+@pytest.mark.parametrize("powers", [[40, 1], [2**31 - 1, 1]])
+def test_explicit_total_index_diagnostic_rejects_before_recurrence(powers):
+    with pytest.raises(ValueError, match="propagator-index diagnostic.*at most 32"):
+        oneloop.reduce(
+            bubble_family(E("0"), E("-3")), powers, diagnostic_max_total_index=32,
+        )

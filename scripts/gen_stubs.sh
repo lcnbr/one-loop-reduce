@@ -49,6 +49,19 @@ mkdir -p "$repo/python/symbolica/community/hepkit/oneloop"
 mv "$repo/python/symbolica/community/hepkit/oneloop.pyi" \
     "$repo/python/symbolica/community/hepkit/oneloop/__init__.pyi"
 
+# Keep the owning generated stub free of trailing spaces, including doc lines.
+python3 - "$repo/python/symbolica/community/hepkit/oneloop/__init__.pyi" <<'NORMALIZE_STUB'
+import re
+import sys
+from pathlib import Path
+
+path = Path(sys.argv[1])
+original = path.read_bytes()
+normalized = re.sub(rb"[ \t]+(?=\r?$)", b"", original, flags=re.MULTILINE)
+if normalized != original:
+    path.write_bytes(normalized)
+NORMALIZE_STUB
+
 # The generator writes the canonical module's flat stub. The community host
 # merges this reducer surface with the master evaluator's API in its own stub.
 # It also re-emits Symbolica's and FeynKit's stubs, which cleanup removes.

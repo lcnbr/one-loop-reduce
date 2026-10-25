@@ -4,6 +4,22 @@ Running record of where this repo is. Newest entries at the top.
 
 ---
 
+## 2026-10-24 — exact numerator coefficients beyond machine factorials
+
+Coefficient extraction uses arbitrary-size `Integer` factorials, removing the
+degree-20 policy. Polynomial admission and subsequent exponent/index operations
+check their actual `i32` storage boundaries before coefficient collection or
+index shifts. Negative powers of scalar-only denominators remain coefficients.
+
+Exact controls cover degrees 21 and 22, transformed denominator coefficients,
+massive tadpoles, scaleless polynomial insertions and storage-overflow errors.
+Gram/Cayley matrix representations and reduction formulas are unchanged.
+Earlier degree/index limit descriptions below record historical behavior;
+ordinary reduction has no total-index ceiling unless explicitly requested
+through the diagnostic options described in the README.
+
+---
+
 ## 2026-09-29 — FeynKit's IntegralFamily is the input
 
 Ben Ruijl's community-3.0.1 patch (#1): `reduce_family` over FeynKit's

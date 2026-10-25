@@ -63,8 +63,18 @@ Exact master formulas and analytic-branch selection are oneloopmaster's; see its
 - One loop, and a numerator polynomial in the loop scalar products with tensors
   already contracted. Positive powers of eikonal (linear) denominators are
   unsupported; propagator shifts need real coefficients.
-- Propagator powers total at most 32; numerator degree at most 20. These bound what
-  is supported, not how fast: highly dotted families can be slow.
+- Ordinary reduction has no total propagator-index ceiling. Optional
+  `ReductionOptions::with_diagnostics()` applies a total-index ceiling of 32;
+  `diagnostic_max_total_index` can select another explicit diagnostic ceiling.
+  Highly dotted families can be slow. Native recurrence grows its stack on the
+  current thread and checks any enclosing Symbolica RSS/time resource budget.
+  WebAssembly uses the same helper for its linear-memory data stack; its VM
+  controls the separate call-stack capacity.
+- Polynomial numerator coefficients use exact arbitrary-size factorials. The
+  native `i32` exponent/index representation is checked; non-polynomial powers
+  and actual storage overflow return errors.
+- The exact IBP fallback requires fewer than 32 propagators for its `u32`
+  sector-mask representation; an unsupported width returns an error.
 - With five or more propagators the reduction drops an `O(ε)` term and needs
   four-dimensional external kinematics.
 - Where the regulated on-shell limit does not exist, an exact IBP solve at the

@@ -5,8 +5,10 @@
 //! master descriptors are registered by this module.
 
 use std::panic;
+use std::time::Duration;
 
 use feynkit_py::PyIntegralFamily;
+use oneloopreduce::ReductionOptions;
 use oneloopreduce::masters::MasterIntegral as RsMasterIntegral;
 pub use oneloopreduce::masters::OneLoopMasters;
 use oneloopreduce::reduce::Reduction as RsReduction;
@@ -15,6 +17,7 @@ use pyo3::types::{PyModule, PyModuleMethods};
 use pyo3::{Bound, PyResult, Python, pyclass, pyfunction, pymethods};
 use symbolica::api::python::{Citation, PythonExpression, SymbolicaCommunityModule};
 use symbolica::atom::{Atom, AtomCore, Symbol};
+use symbolica::utils::resources::{self, ResourceBudget, ResourceLimits};
 
 #[cfg(feature = "python_stubgen")]
 use pyo3_stub_gen::{
@@ -129,33 +132,58 @@ impl SymbolicaCommunityModule for CommunityModule {
 ///     One signed integer per denominator.
 /// numerator : Expression or None, optional
 ///     Additional scalar numerator; None uses one.
+/// diagnostic_max_total_index : int or None, optional
+///     Explicit index-count diagnostic; None leaves this count unrestricted.
+/// max_process_rss_bytes : int or None, optional
+///     Cooperative whole-process RSS ceiling; None imposes no ceiling.
+/// max_elapsed_seconds : float or None, optional
+///     Cooperative deadline for native reduction; None imposes no deadline.
 #[cfg_attr(
     feature = "python_stubgen",
     gen_stub_pyfunction(module = "symbolica.community.hepkit.oneloop")
 )]
 #[pyfunction]
-#[pyo3(signature = (family, powers, *, numerator = None))]
+#[pyo3(signature = (family, powers, *, numerator=None, diagnostic_max_total_index=None, max_process_rss_bytes=None, max_elapsed_seconds=None))]
 pub fn reduce(
     family: &PyIntegralFamily,
     powers: Vec<i32>,
     numerator: Option<PythonExpression>,
+    diagnostic_max_total_index: Option<i64>,
+    max_process_rss_bytes: Option<u64>,
+    max_elapsed_seconds: Option<f64>,
 ) -> PyResult<Reduction> {
-    let numerator = numerator
-        .map(|value| value.expr)
-        .unwrap_or_else(|| Atom::num(1));
-    let shared = family.as_family();
-    let reduced = catch_panic(|| oneloopreduce::reduce_family(shared, &powers, &numerator))
-        .map_err(reduction_failed)?
-        .map_err(|error| reduction_failed(error.to_string()))?;
-    let dimension = shared
-        .kinematics()
-        .dimension()
-        .to_symbolic()
-        .get_symbol()
-        .expect("reduce_family validated a symbolic dimension");
-    Ok(Reduction {
-        terms: reduced.terms,
-        dimension,
+    let max_elapsed = max_elapsed_seconds
+        .map(Duration::try_from_secs_f64)
+        .transpose()
+        .map_err(|_| PyValueError::new_err("max_elapsed_seconds must be finite and nonnegative"))?;
+    let budget = ResourceBudget::new(ResourceLimits {
+        max_process_rss_bytes,
+        max_elapsed,
+    });
+    budget.run(|| {
+        resources::checkpoint().map_err(|error| reduction_failed(error.to_string()))?;
+        let numerator = numerator
+            .map(|value| value.expr)
+            .unwrap_or_else(|| Atom::num(1));
+        let shared = family.as_family();
+        let options = ReductionOptions {
+            diagnostic_max_total_index,
+        };
+        let reduced = catch_panic(|| options.reduce_family(shared, &powers, &numerator))
+            .map_err(reduction_failed)?
+            .map_err(|error| reduction_failed(error.to_string()))?;
+        let dimension = shared
+            .kinematics()
+            .dimension()
+            .to_symbolic()
+            .get_symbol()
+            .expect("reduce_family validated a symbolic dimension");
+        let result = Reduction {
+            terms: reduced.terms,
+            dimension,
+        };
+        resources::checkpoint().map_err(|error| reduction_failed(error.to_string()))?;
+        Ok(result)
     })
 }
 
@@ -361,9 +389,10 @@ impl Reduction {
                 terms: self.terms.clone(),
             }
             .simplify()
-            .terms
         })
-        .map_err(reduction_failed)?;
+        .map_err(reduction_failed)?
+        .map_err(|error| reduction_failed(error.to_string()))?
+        .terms;
         Ok(Reduction {
             terms,
             dimension: self.dimension,

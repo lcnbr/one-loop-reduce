@@ -18,6 +18,7 @@ pub use shared_family::reduce_family;
 
 pub use error::OneLoopError;
 pub use masters::{MasterBasis, MasterIntegral, OneLoopMasters};
+pub use recurrence::ReductionOptions;
 pub use reduce::{MAX_TOTAL_INDEX, Reduction};
 
 /// Activate the Symbolica license once per process, from `SYMBOLICA_LICENSE`.
