@@ -26,7 +26,7 @@ thiserror = "2.0"
 # oneloopmaster. Use one shared Symbolica kernel selected by the build root.
 # WebAssembly retains symbolic reduction without the native numerical backend.
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
-oneloop = { git = "https://github.com/alphal00p/oneloopmaster", branch = "main", default-features = false }
+oneloop = { git = "https://github.com/alphal00p/oneloopmaster", rev = "73102242c9c35e92be30f4e1f877e141b8f73c6c", default-features = false }
 
 # Benchmark / validation harnesses -- not part of the library. Sources live under
 # benchmarks/; run with e.g.

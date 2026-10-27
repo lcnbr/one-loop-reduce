@@ -89,11 +89,12 @@ The entry point is
 `oneloopreduce::reduce_family(&feynkit_graph::IntegralFamily, powers, numerator)`;
 `OneLoopMasters.symbol_with_scale(&master, &mu_squared)` builds the master calls.
 
-FeynKit (`alphal00p/gammaloop`, branch `feynkit`) and oneloopmaster (branch `main`)
-are git dependencies on the same branches the consuming root uses, so Cargo links one
-copy of each; `Cargo.lock` records the exact commits. Symbolica is the released 3.0.1;
-consuming roots must resolve a single copy. WebAssembly builds leave out the native
-numerical dependencies.
+FeynKit (`alphal00p/gammaloop`, branch `feynkit`) and oneloopmaster are Git
+dependencies; the latter uses an explicit revision that consuming roots must share.
+`Cargo.lock` records the exact commits. Leaf crates keep a Symbolica 3.0.1 version
+requirement so consuming roots control the shared kernel. Standalone builds patch
+Symbolica, Numerica and Graphica to the official Symbolica `community` branch.
+WebAssembly builds leave out the native numerical dependencies.
 
 ```sh
 cargo build --workspace --all-targets
